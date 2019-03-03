@@ -26,6 +26,7 @@ class DiffDrive():
         self.cmd_drive_data = None
         self.measurement_data = None
         rospy.Subscriber("/cmd_drive", UsvDrive, self.cmd_drive_callback)
+        rospy.Subscriber("/simulated_sensor/")
         rospy.Subscriber("/wamv/odom", Odometry, self.diff_drive_callback)
 
 
@@ -51,6 +52,28 @@ class DiffDrive():
 
 
     def diff_drive_callback(self):
+
+
+
+    def control_robot(self):
+        x,y,theta = sefl.get_xyz()
+
+        goal = self.goal_state()
+        gx = goal[0]
+        gy = goal[1]
+
+
+
+        delta_y = gy - y
+        delta_x = gx - x
+        angle_with_respect_to_axis = math.atan2(delta_y/delta_x)
+
+
+        new_theta = angle_with_respect_to_axis - theta
+
+
+        if new_theta > 0:
+            self.
 
 
 
