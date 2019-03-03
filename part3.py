@@ -13,7 +13,7 @@ import math
 from robotx_gazebo.msg import UsvDrive
 from nav_msgs.msg import Odometry
 from gym import wrappers
-
+from simulated_sensor.msg import Measurement
 
 # import our training environment
 
@@ -28,7 +28,7 @@ class DiffDrive():
         self.cmd_drive_data = None
         self.measurement_data = None
         rospy.Subscriber("/cmd_drive", UsvDrive, self.cmd_drive_callback)
-        rospy.Subscriber("/simulated_sensor/raw")
+        rospy.Subscriber("/simulated_sensor/raw", Measurement, self.measurement_callback)
         rospy.Subscriber("/wamv/odom", Odometry, self.diff_drive_callback)
 
 
@@ -40,11 +40,16 @@ class DiffDrive():
 
     def measurement_callback(self, measurement):
         self.measurement_data = (measurement.longitude, measurement.latitude)
+        print('print measurement data ', self.measurement_data)
         
 
     def get_xyz(self):
+
         xy = self.current_coord.pose.pose.position
         angle_with_respect_to_axis =  self.current_coord.pose.pose.orientation
+
+
+        print('Odometry data ', xy.x, xy.y, angle_with_respect_to_axis.z)
 
         return (xy.x, xy.y, angle_with_respect_to_axis.z)
 
