@@ -5,12 +5,14 @@ import numpy
 import time
 import qlearn
 import doubleqlearn
-from gym import wrappers
 import rospy
 import rospkg
+import math
+
+
 from robotx_gazebo.msg import UsvDrive
 from nav_msgs.msg import Odometry
-
+from gym import wrappers
 
 
 # import our training environment
@@ -26,7 +28,7 @@ class DiffDrive():
         self.cmd_drive_data = None
         self.measurement_data = None
         rospy.Subscriber("/cmd_drive", UsvDrive, self.cmd_drive_callback)
-        rospy.Subscriber("/simulated_sensor/")
+        rospy.Subscriber("/simulated_sensor/raw")
         rospy.Subscriber("/wamv/odom", Odometry, self.diff_drive_callback)
 
 
@@ -51,7 +53,11 @@ class DiffDrive():
         self.cmd_drive_data = data
 
 
-    def diff_drive_callback(self):
+    def diff_drive_callback(self, inpt):
+        self.current_coord = inpt
+
+
+        self.control_robot()
 
 
 
@@ -73,7 +79,15 @@ class DiffDrive():
 
 
         if new_theta > 0:
-            self.
+            self.publisher.publish(UsvDrive(right=1, left=0))
+        elif new_theta < 0:
+            self.publisher.publish(UsvDrive(right=0, left=1))
+        elif math.abs(new_theta) < 0.01:
+            self.publisher.publish(UsvDrive(right=1, left=1))
+
+
+
+
 
 
 
